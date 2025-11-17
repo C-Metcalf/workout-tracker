@@ -3,13 +3,14 @@
 from __future__ import annotations
 
 from datetime import date
-from typing import Dict, List, Sequence
+from typing import Dict, List, Optional, Sequence
 
 import pyqtgraph as pg
 from PySide6.QtCore import QDate, Qt, Signal
 from PySide6.QtWidgets import (
     QAbstractItemView,
     QDateEdit,
+    QDoubleSpinBox,
     QFormLayout,
     QGroupBox,
     QHeaderView,
@@ -23,6 +24,8 @@ from PySide6.QtWidgets import (
     QStyle,
     QTableWidget,
     QTableWidgetItem,
+    QTreeWidget,
+    QTreeWidgetItem,
     QVBoxLayout,
     QWidget,
 )
@@ -108,23 +111,37 @@ class WorkoutTab(QWidget):
         form.addRow("Notes", self.notes_edit)
         vbox.addLayout(form)
 
-        self.sets_table = QTableWidget(0, 3)
-        self.sets_table.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
-        self.sets_table.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
-        self.sets_table.setHorizontalHeaderLabels(["Exercise", "Reps", "Weight (lbs)"])
-        self.sets_table.horizontalHeader().setStretchLastSection(True)
-        vbox.addWidget(self.sets_table)
+        exercise_row = QHBoxLayout()
+        self.exercise_name_input = QLineEdit()
+        self.exercise_name_input.setPlaceholderText("Exercise name")
+        self.add_exercise_btn = QPushButton("Add Exercise")
+        self.add_exercise_btn.clicked.connect(self._add_exercise)
+        exercise_row.addWidget(self.exercise_name_input)
+        exercise_row.addWidget(self.add_exercise_btn)
+        vbox.addLayout(exercise_row)
 
-        button_row = QHBoxLayout()
-        self.add_set_btn = QPushButton("Add Set")
-        self.add_set_btn.clicked.connect(self._add_set_row)
-        self.remove_set_btn = QPushButton("Remove Selected")
-        self.remove_set_btn.clicked.connect(self._remove_selected_set)
+        self.exercises_view = QTreeWidget()
+        self.exercises_view.setHeaderLabels(["Exercise", "Weight (lbs)", "Reps"])
+        self.exercises_view.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
+        self.exercises_view.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectItems)
+        self.exercises_view.setRootIsDecorated(True)
+        vbox.addWidget(self.exercises_view)
 
-        button_row.addWidget(self.add_set_btn)
-        button_row.addWidget(self.remove_set_btn)
-        button_row.addStretch()
-        vbox.addLayout(button_row)
+        set_row = QHBoxLayout()
+        self.weight_input = QDoubleSpinBox()
+        self.weight_input.setRange(0.0, 2000.0)
+        self.weight_input.setSuffix(" lbs")
+        self.weight_input.setDecimals(1)
+        self.reps_input = QSpinBox()
+        self.reps_input.setRange(1, 100)
+        self.add_set_btn = QPushButton("Add Set to Exercise")
+        self.add_set_btn.clicked.connect(self._add_set_to_exercise)
+        set_row.addWidget(QLabel("Weight"))
+        set_row.addWidget(self.weight_input)
+        set_row.addWidget(QLabel("Reps"))
+        set_row.addWidget(self.reps_input)
+        set_row.addWidget(self.add_set_btn)
+        vbox.addLayout(set_row)
 
         self.save_workout_btn = QPushButton("Save Workout")
         self.save_workout_btn.setIcon(
@@ -180,24 +197,58 @@ class WorkoutTab(QWidget):
 
     # Slots ----------------------------------------------------------------
 
-    def _add_set_row(self) -> None:
-        row = self.sets_table.rowCount()
-        self.sets_table.insertRow(row)
-        for column in range(3):
-            self.sets_table.setItem(row, column, QTableWidgetItem(""))
+    def _add_exercise(self) -> None:
+        name = self.exercise_name_input.text().strip()
+        if not name:
+            self.errorOccurred.emit("Enter an exercise name before adding.")
+            return
+        if self._find_exercise_item(name):
+            self.errorOccurred.emit("Exercise already exists in the list.")
+            return
+        self._create_exercise_item(name)
+        self.exercise_name_input.clear()
 
-    def _remove_selected_set(self) -> None:
-        row = self.sets_table.currentRow()
-        if row >= 0:
-            self.sets_table.removeRow(row)
+    def _add_set_to_exercise(self) -> None:
+        exercise_item = self._current_exercise_item()
+        if exercise_item is None:
+            self.errorOccurred.emit("Select an exercise to append sets.")
+            return
+        weight = self.weight_input.value()
+        reps = self.reps_input.value()
+        if reps <= 0:
+            self.errorOccurred.emit("Reps must be greater than zero.")
+            return
+        child = QTreeWidgetItem(["", f"{weight:.1f}", str(reps)])
+        exercise_item.addChild(child)
+        exercise_item.setExpanded(True)
 
     def _populate_default_sets(self) -> None:
+        self.exercises_view.clear()
         for row in _default_sets_rows():
-            self._add_set_row()
-            row_index = self.sets_table.rowCount() - 1
-            self.sets_table.item(row_index, 0).setText(row["exercise"])
-            self.sets_table.item(row_index, 1).setText(row["reps"])
-            self.sets_table.item(row_index, 2).setText(row["weight"])
+            exercise_item = self._create_exercise_item(row["exercise"])
+            child = QTreeWidgetItem(["", row["weight"], row["reps"]])
+            exercise_item.addChild(child)
+            exercise_item.setExpanded(True)
+
+    def _create_exercise_item(self, name: str) -> QTreeWidgetItem:
+        item = QTreeWidgetItem([name, "", ""])
+        item.setExpanded(True)
+        self.exercises_view.addTopLevelItem(item)
+        return item
+
+    def _find_exercise_item(self, name: str) -> Optional[QTreeWidgetItem]:
+        lowered = name.lower()
+        for index in range(self.exercises_view.topLevelItemCount()):
+            item = self.exercises_view.topLevelItem(index)
+            if item.text(0).lower() == lowered:
+                return item
+        return None
+
+    def _current_exercise_item(self) -> Optional[QTreeWidgetItem]:
+        item = self.exercises_view.currentItem()
+        if item is None:
+            return None
+        return item if item.parent() is None else item.parent()
 
     def _save_workout(self) -> None:
         try:
@@ -220,31 +271,45 @@ class WorkoutTab(QWidget):
             return
 
         self.statusMessage.emit("Workout saved.")
-        self.notes_edit.clear()
-        self.focus_edit.clear()
+        self._clear_workout_form()
         self._refresh_history()
 
     def _collect_sets(self) -> Sequence[ExerciseSet]:
         sets: List[ExerciseSet] = []
-        for row in range(self.sets_table.rowCount()):
-            exercise_item = self.sets_table.item(row, 0)
-            reps_item = self.sets_table.item(row, 1)
-            weight_item = self.sets_table.item(row, 2)
-            if not exercise_item or not exercise_item.text().strip():
+        for index in range(self.exercises_view.topLevelItemCount()):
+            exercise_item = self.exercises_view.topLevelItem(index)
+            exercise_name = exercise_item.text(0).strip()
+            if not exercise_name:
                 continue
-            try:
-                reps = int(reps_item.text()) if reps_item else 0
-                weight = float(weight_item.text()) if weight_item else 0.0
-            except ValueError:
-                raise ValueError("Ensure reps and weight are numeric.")
-            sets.append(
-                ExerciseSet(
-                    exercise=exercise_item.text().strip(),
-                    reps=reps,
-                    weight=weight,
+            for child_index in range(exercise_item.childCount()):
+                child = exercise_item.child(child_index)
+                weight_text = (child.text(1) or "").strip()
+                reps_text = (child.text(2) or "").strip()
+                try:
+                    weight = float(weight_text or 0.0)
+                    reps = int(reps_text or 0)
+                except ValueError as exc:  # noqa: PERF203
+                    raise ValueError("Ensure reps and weight are numeric.") from exc
+                if reps <= 0:
+                    raise ValueError(f"Invalid reps for {exercise_name}.")
+                sets.append(
+                    ExerciseSet(
+                        exercise=exercise_name,
+                        reps=reps,
+                        weight=weight,
+                    )
                 )
-            )
         return sets
+
+    def _clear_workout_form(self) -> None:
+        self.session_date.setDate(QDate.currentDate())
+        self.focus_edit.clear()
+        self.duration_spin.setValue(0)
+        self.notes_edit.clear()
+        self.exercise_name_input.clear()
+        self.exercises_view.clear()
+        self.weight_input.setValue(0.0)
+        self.reps_input.setValue(1)
 
     def _refresh_history(self) -> None:
         try:

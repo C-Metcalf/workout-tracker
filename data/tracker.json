@@ -25,6 +25,47 @@
           "notes": ""
         }
       ]
+    },
+    {
+      "session_id": "session-0a1282afc55840fea44a8d5d4ae2177a",
+      "performed_on": "2025-11-17",
+      "focus": "k",
+      "duration_minutes": null,
+      "notes": "",
+      "sets": [
+        {
+          "exercise": "Bench Press",
+          "reps": 8,
+          "weight": 135.0,
+          "weight_unit": "lbs",
+          "rir": null,
+          "notes": ""
+        },
+        {
+          "exercise": "Incline DB Press",
+          "reps": 10,
+          "weight": 45.0,
+          "weight_unit": "lbs",
+          "rir": null,
+          "notes": ""
+        },
+        {
+          "exercise": "Deadlift",
+          "reps": 1,
+          "weight": 0.0,
+          "weight_unit": "lbs",
+          "rir": null,
+          "notes": ""
+        },
+        {
+          "exercise": "Deadlift",
+          "reps": 6,
+          "weight": 180.0,
+          "weight_unit": "lbs",
+          "rir": null,
+          "notes": ""
+        }
+      ]
     }
   ],
   "meals": [],
@@ -56,6 +97,34 @@
       "role": "assistant",
       "content": "Assistant (preview): 1 sessions logged with 1530 lbs volume. Today's intake is 0 kcal.",
       "created_at": "2025-11-17T20:47:23.622804+00:00",
+      "metadata": {}
+    },
+    {
+      "message_id": "chat-6d9468efa02c4e7d8a390a7ff4f1e3d3",
+      "role": "user",
+      "content": "h",
+      "created_at": "2025-11-17T21:01:23.947150+00:00",
+      "metadata": {}
+    },
+    {
+      "message_id": "chat-d9fd414bfce74d50a0fa1c24000a2726",
+      "role": "assistant",
+      "content": "Assistant (preview): 1 sessions logged with 1530 lbs volume. Today's intake is 0 kcal.",
+      "created_at": "2025-11-17T21:01:23.948963+00:00",
+      "metadata": {}
+    },
+    {
+      "message_id": "chat-9aa68fe49af14c6a912884c67b2f9f64",
+      "role": "user",
+      "content": "gh",
+      "created_at": "2025-11-17T21:01:26.377124+00:00",
+      "metadata": {}
+    },
+    {
+      "message_id": "chat-85859e7e93e34d2db115050e3130400b",
+      "role": "assistant",
+      "content": "Assistant (preview): 1 sessions logged with 1530 lbs volume. Today's intake is 0 kcal.",
+      "created_at": "2025-11-17T21:01:26.379052+00:00",
       "metadata": {}
     }
   ]
