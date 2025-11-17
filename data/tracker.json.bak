@@ -1,0 +1,33 @@
+{
+  "version": 1,
+  "workouts": [
+    {
+      "session_id": "session-d67fbacd98c14e0eaea130135ae5028b",
+      "performed_on": "2025-11-17",
+      "focus": "Push A",
+      "duration_minutes": 15,
+      "notes": "",
+      "sets": [
+        {
+          "exercise": "Bench Press",
+          "reps": 8,
+          "weight": 135.0,
+          "weight_unit": "lbs",
+          "rir": null,
+          "notes": ""
+        },
+        {
+          "exercise": "Incline DB Press",
+          "reps": 10,
+          "weight": 45.0,
+          "weight_unit": "lbs",
+          "rir": null,
+          "notes": ""
+        }
+      ]
+    }
+  ],
+  "meals": [],
+  "macros": [],
+  "chat": []
+}
