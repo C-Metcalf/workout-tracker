@@ -1,0 +1,62 @@
+{
+  "version": 1,
+  "workouts": [
+    {
+      "session_id": "session-d67fbacd98c14e0eaea130135ae5028b",
+      "performed_on": "2025-11-17",
+      "focus": "Push A",
+      "duration_minutes": 15,
+      "notes": "",
+      "sets": [
+        {
+          "exercise": "Bench Press",
+          "reps": 8,
+          "weight": 135.0,
+          "weight_unit": "lbs",
+          "rir": null,
+          "notes": ""
+        },
+        {
+          "exercise": "Incline DB Press",
+          "reps": 10,
+          "weight": 45.0,
+          "weight_unit": "lbs",
+          "rir": null,
+          "notes": ""
+        }
+      ]
+    }
+  ],
+  "meals": [],
+  "macros": [],
+  "chat": [
+    {
+      "message_id": "chat-d57b52233df04a4894faca53d8ff0fd2",
+      "role": "user",
+      "content": "Hello",
+      "created_at": "2025-11-17T20:47:00.122856+00:00",
+      "metadata": {}
+    },
+    {
+      "message_id": "chat-cd65fef6b5764a77b81d42463bdc880a",
+      "role": "assistant",
+      "content": "Assistant (preview): 1 sessions logged with 1530 lbs volume. Today's intake is 0 kcal.",
+      "created_at": "2025-11-17T20:47:00.124483+00:00",
+      "metadata": {}
+    },
+    {
+      "message_id": "chat-308a4987d0c04130a956f49894be1b44",
+      "role": "user",
+      "content": "h",
+      "created_at": "2025-11-17T20:47:23.621154+00:00",
+      "metadata": {}
+    },
+    {
+      "message_id": "chat-97633ad9b62d494eb933a6e0c3353d48",
+      "role": "assistant",
+      "content": "Assistant (preview): 1 sessions logged with 1530 lbs volume. Today's intake is 0 kcal.",
+      "created_at": "2025-11-17T20:47:23.622804+00:00",
+      "metadata": {}
+    }
+  ]
+}
