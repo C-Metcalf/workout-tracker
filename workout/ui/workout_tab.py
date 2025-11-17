@@ -127,6 +127,13 @@ class WorkoutTab(QWidget):
         self.exercises_view.setRootIsDecorated(True)
         vbox.addWidget(self.exercises_view)
 
+        manage_row = QHBoxLayout()
+        self.remove_entry_btn = QPushButton("Remove Selected")
+        self.remove_entry_btn.clicked.connect(self._remove_selected_entry)
+        manage_row.addStretch()
+        manage_row.addWidget(self.remove_entry_btn)
+        vbox.addLayout(manage_row)
+
         set_row = QHBoxLayout()
         self.weight_input = QDoubleSpinBox()
         self.weight_input.setRange(0.0, 2000.0)
@@ -219,6 +226,7 @@ class WorkoutTab(QWidget):
             self.errorOccurred.emit("Reps must be greater than zero.")
             return
         child = QTreeWidgetItem(["", f"{weight:.1f}", str(reps)])
+        child.setFlags(child.flags() | Qt.ItemFlag.ItemIsEditable | Qt.ItemFlag.ItemIsSelectable)
         exercise_item.addChild(child)
         exercise_item.setExpanded(True)
 
@@ -227,11 +235,13 @@ class WorkoutTab(QWidget):
         for row in _default_sets_rows():
             exercise_item = self._create_exercise_item(row["exercise"])
             child = QTreeWidgetItem(["", row["weight"], row["reps"]])
+            child.setFlags(child.flags() | Qt.ItemFlag.ItemIsEditable | Qt.ItemFlag.ItemIsSelectable)
             exercise_item.addChild(child)
             exercise_item.setExpanded(True)
 
     def _create_exercise_item(self, name: str) -> QTreeWidgetItem:
         item = QTreeWidgetItem([name, "", ""])
+        item.setFlags(item.flags() | Qt.ItemFlag.ItemIsEditable | Qt.ItemFlag.ItemIsSelectable)
         item.setExpanded(True)
         self.exercises_view.addTopLevelItem(item)
         return item
@@ -249,6 +259,17 @@ class WorkoutTab(QWidget):
         if item is None:
             return None
         return item if item.parent() is None else item.parent()
+
+    def _remove_selected_entry(self) -> None:
+        item = self.exercises_view.currentItem()
+        if item is None:
+            return
+        parent = item.parent()
+        if parent is None:
+            index = self.exercises_view.indexOfTopLevelItem(item)
+            self.exercises_view.takeTopLevelItem(index)
+        else:
+            parent.removeChild(item)
 
     def _save_workout(self) -> None:
         try:
