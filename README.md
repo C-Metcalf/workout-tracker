@@ -12,7 +12,7 @@ Deliver a cross-platform PySide6 desktop app that tracks workouts, meals, and AI
 ## Plan
 
 1. **Domain & Storage (DONE)** – Added dataclasses and repository interfaces under `workout/domain`, plus JSON-backed repositories with schema versioning (`workout/storage/json_store.py`). Storage defaults to a portable JSON file with automatic backups and ID generation.  
-2. **Services & Analytics** – Implement workout/meal services for CRUD, validation, macro/volume calculations, streak tracking, and expose observable DTOs for UI/AI contexts.  
+2. **Services & Analytics (DONE)** – Added workout and meal services under `workout/services` with validation, CRUD helpers, streak and volume summaries, macro aggregation, and DTOs for UI/AI consumers plus unit tests.  
 3. **UI/Interactions** – Rework Qt tabs: logging forms, history tables with filtering, charts, meal planner, and AI chat dock; wire signals to services and keep widgets thin.  
 4. **Visualization & Reporting** – Configure pyqtgraph dashboards for volume, PRs, calories, macros; enable date/attribute filtering and export to CSV/PDF.  
 5. **AI Assistant** – Create adapter for preferred LLM (OpenAI/local) with prompt templates pulling recent workout/meal summaries; handle auth via env vars and show conversation history.  
