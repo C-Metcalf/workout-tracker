@@ -1,0 +1,18 @@
+{
+  "3" : {
+    "push-a":{
+      "bench": {
+        "45lbs": 6,
+        "55lbs": 6,
+        "60lbs": 6
+      },
+      "incline-db-chest-fly": {
+        "30lbs": 8,
+        "20lbs": 10
+      },
+      "db-skull-crushers":{
+
+      }
+    }
+  }
+}
